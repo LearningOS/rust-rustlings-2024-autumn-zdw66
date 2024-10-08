@@ -3,9 +3,9 @@
 // Execute `rustlings hint macros2` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
 fn main() {
+    #[cfg(feature = "use-macro")]//条件编译，给提示
     my_macro!();
 }
 

@@ -5,9 +5,10 @@
 // Execute `rustlings hint macros3` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+
 
 mod macros {
+    // #[warn(unused_attributes)]
     macro_rules! my_macro {
         () => {
             println!("Check out my macro!");
@@ -16,5 +17,6 @@ mod macros {
 }
 
 fn main() {
+    #[cfg(feature = "use-macro")]//条件编译，给提示
     my_macro!();
 }
