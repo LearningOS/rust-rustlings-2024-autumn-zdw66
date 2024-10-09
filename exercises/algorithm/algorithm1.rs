@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +29,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::cmp::Ord> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: std::cmp::Ord> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -70,14 +70,31 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+	where
+        T: Clone,
+    {
+        let mut list = LinkedList { length: 0, start: None, end: None };
+        let mut elements = Vec::new();
+
+        let mut node_a = list_a.start;
+        while let Some(nonnull_a) = node_a {
+            elements.push(unsafe { &(*nonnull_a.as_ptr()).val }.clone());
+            node_a = unsafe { (*nonnull_a.as_ptr()).next };
         }
-	}
+
+        let mut node_b = list_b.start;
+        while let Some(nonnull_b) = node_b {
+            elements.push(unsafe { &(*nonnull_b.as_ref()).val }.clone());
+            node_b = unsafe { (*nonnull_b.as_ptr()).next };
+        }
+
+        elements.sort_unstable();
+        for element in elements {
+            list.add(element);
+        }
+
+        list
+    }
 }
 
 impl<T> Display for LinkedList<T>

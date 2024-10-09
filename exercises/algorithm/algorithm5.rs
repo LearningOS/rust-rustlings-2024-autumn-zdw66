@@ -3,7 +3,7 @@
 	This problem requires you to implement a basic BFS algorithm
 */
 
-//I AM NOT DONE
+
 use std::collections::VecDeque;
 
 // Define a graph
@@ -30,8 +30,26 @@ impl Graph {
         
 		//TODO
 
-        let mut visit_order = vec![];
-        visit_order
+        let mut visit_order = Vec::new(); // To store the order of visited nodes  
+        let mut queue = VecDeque::new(); // Queue for BFS  
+        let mut visited = vec![false; self.adj.len()]; // Track visited nodes  
+        
+        queue.push_back(start); // Start BFS from the given starting node  
+        visited[start] = true; // Mark the start node as visited  
+
+        while let Some(node) = queue.pop_front() {  
+            visit_order.push(node); // Add the current node to the visit order  
+            
+            // Iterate through all neighbors of the current node  
+            for &neighbor in &self.adj[node] {  
+                if !visited[neighbor] { // If the neighbor hasn't been visited  
+                    visited[neighbor] = true; // Mark it as visited  
+                    queue.push_back(neighbor); // Add it to the queue  
+                }  
+            }  
+        }  
+
+        visit_order // Return the order of visited nodes  
     }
 }
 

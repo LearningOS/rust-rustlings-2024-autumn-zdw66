@@ -38,6 +38,9 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.sift_up(self.count);
+        self.count += 1;
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,8 +61,56 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+		let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+
+        if left < self.count && right < self.count {
+            if (self.comparator)(&self.items[right], &self.items[left]) {
+                right
+            } else {
+                left
+            }
+        } else if left < self.count {
+            left
+        } else if right < self.count {
+            right
+        } else {
+            0  // No children
+        }
     }
+    fn sift_up(&mut self, mut idx: usize) {
+        while idx > 0 {
+            let parent = self.parent_idx(idx);
+            if (self.comparator)(&self.items[parent], &self.items[idx]) {
+                self.items.swap(parent, idx);
+                idx = parent;
+            } else {
+                break;
+            }
+        }
+    }
+
+    fn sift_down(&mut self, mut idx: usize) {
+        loop {  
+            let left = self.left_child_idx(idx);  
+            let right = self.right_child_idx(idx);  
+            let mut smallest_or_largest = idx;  
+    
+            if left < self.count && (self.comparator)(&self.items[left], &self.items[smallest_or_largest]) {  
+                smallest_or_largest = left;  
+            }  
+            if right < self.count && (self.comparator)(&self.items[right], &self.items[smallest_or_largest]) {  
+                smallest_or_largest = right;  
+            }  
+            if smallest_or_largest != idx {  
+                self.items.swap(smallest_or_largest, idx);  
+                idx = smallest_or_largest;  
+            } else {  
+                break;  
+            }  
+        }  
+    }
+    
 }
 
 impl<T> Heap<T>
@@ -79,13 +130,22 @@ where
 
 impl<T> Iterator for Heap<T>
 where
-    T: Default,
+    T: Default+ Clone,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+		if self.count == 0 {
+            None
+        } else {
+            
+            let result = self.items[self.count].clone();
+            self.items[self.count] = self.items[self.count-1].clone();
+            self.count -= 1;
+            self.sift_down(self.count);
+            Some(result)
+        }
     }
 }
 
