@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,9 +38,11 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
-        self.items.push(value);
-        self.sift_up(self.count);
+        self.items.push(T::default());
+        let idx = self.count;
         self.count += 1;
+        self.items[idx] = value;
+        self.sift_up(idx);
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -78,10 +80,11 @@ where
             0  // No children
         }
     }
+
     fn sift_up(&mut self, mut idx: usize) {
         while idx > 0 {
             let parent = self.parent_idx(idx);
-            if (self.comparator)(&self.items[parent], &self.items[idx]) {
+            if !(self.comparator)(&self.items[parent], &self.items[idx]) {
                 self.items.swap(parent, idx);
                 idx = parent;
             } else {
@@ -89,6 +92,18 @@ where
             }
         }
     }
+    //子节点是否小于父节点,如果 self.comparator(&self.items[idx], &self.items[parent]) 返回 true，这意味着子节点是较小值
+    // fn sift_up(&mut self, mut idx: usize) {
+    //     while idx > 0 {
+    //         let parent = self.parent_idx(idx);
+    //         if (self.comparator)(&self.items[idx], &self.items[parent]) {
+    //             self.items.swap(parent, idx);
+    //             idx = parent;
+    //         } else {
+    //             break;
+    //         }
+    //     }
+    // }
 
     fn sift_down(&mut self, mut idx: usize) {
         loop {  
@@ -108,7 +123,7 @@ where
             } else {  
                 break;  
             }  
-        }  
+        }
     }
     
 }
@@ -118,12 +133,12 @@ where
     T: Default + Ord,
 {
     /// Create a new MinHeap
-    pub fn new_min() -> Self {
+    pub fn new_min() -> Heap<T> {
         Self::new(|a, b| a < b)
     }
 
     /// Create a new MaxHeap
-    pub fn new_max() -> Self {
+    pub fn new_max() -> Heap<T> {
         Self::new(|a, b| a > b)
     }
 }
@@ -138,12 +153,11 @@ where
         //TODO
 		if self.count == 0 {
             None
-        } else {
-            
-            let result = self.items[self.count].clone();
-            self.items[self.count] = self.items[self.count-1].clone();
+        } else {   
+            let result = self.items[0].clone();
+            self.items[0] = self.items[self.count - 1].clone();
             self.count -= 1;
-            self.sift_down(self.count);
+            self.sift_down(0);
             Some(result)
         }
     }
